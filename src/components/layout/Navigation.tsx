@@ -174,8 +174,6 @@ export function Navigation({ isAdmin, hunterName, teamName, onLogout }: Navigati
         </div>
       </aside>
 
-      {/* Spacer for mobile */}
-      <div className="h-16 lg:hidden" />
     </>
   )
 }
