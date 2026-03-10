@@ -80,8 +80,8 @@ model Submission {
   type           SubmissionType
   animalType     AnimalType?      // Only for ANIMAL type
   session        HuntingSession
-  photoUrl       String
-  photoPublicId  String           // Cloudinary public ID for deletion
+  photoData      String           @db.Text // Base64 encoded image
+  photoMimeType  String           // e.g., "image/jpeg"
   date           DateTime
   time           String           // Stored as string like "14:30"
   location       String
@@ -102,8 +102,8 @@ model PhotoReel {
   id            String   @id @default(cuid())
   hunterId      String?
   hunter        Hunter?  @relation(fields: [hunterId], references: [id], onDelete: SetNull)
-  photoUrl      String
-  photoPublicId String   // Cloudinary public ID
+  photoData     String   @db.Text // Base64 encoded image
+  photoMimeType String   // e.g., "image/jpeg"
   caption       String?
   createdAt     DateTime @default(now())
 

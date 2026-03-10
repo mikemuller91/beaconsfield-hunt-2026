@@ -1,18 +1,18 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Camera, X, Upload, Loader2 } from 'lucide-react'
-import Image from 'next/image'
+import { Camera, X, Loader2 } from 'lucide-react'
 
 interface ImageUploadProps {
-  onUpload: (url: string, publicId: string) => void
+  onUpload: (base64: string, mimeType: string) => void
   currentImage?: string
   onRemove?: () => void
 }
 
 export function ImageUpload({ onUpload, currentImage, onRemove }: ImageUploadProps) {
-  const [isUploading, setIsUploading] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [preview, setPreview] = useState<string | null>(currentImage || null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,76 +25,109 @@ export function ImageUpload({ onUpload, currentImage, onRemove }: ImageUploadPro
       return
     }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image must be less than 10MB')
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be less than 5MB')
       return
     }
 
     setError(null)
-    setIsUploading(true)
+    setIsProcessing(true)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'beaconsfield-hunt')
+      // Compress and convert to base64
+      const base64 = await compressAndConvert(file)
+      const mimeType = file.type
 
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: 'POST',
-          body: formData,
+      setPreview(base64)
+      onUpload(base64, mimeType)
+    } catch (err) {
+      console.error('Processing error:', err)
+      setError('Failed to process image. Please try again.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const compressAndConvert = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+
+      img.onload = () => {
+        // Calculate new dimensions (max 1200px on longest side)
+        const maxSize = 1200
+        let { width, height } = img
+
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width
+          width = maxSize
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height
+          height = maxSize
         }
-      )
 
-      if (!response.ok) {
-        throw new Error('Upload failed')
+        canvas.width = width
+        canvas.height = height
+
+        ctx?.drawImage(img, 0, 0, width, height)
+
+        // Convert to JPEG base64 with quality 0.8
+        const base64 = canvas.toDataURL('image/jpeg', 0.8)
+        resolve(base64)
       }
 
-      const data = await response.json()
-      onUpload(data.secure_url, data.public_id)
-    } catch (err) {
-      console.error('Upload error:', err)
-      setError('Failed to upload image. Please try again.')
-    } finally {
-      setIsUploading(false)
+      img.onerror = () => reject(new Error('Failed to load image'))
+
+      // Read file as data URL
+      const reader = new FileReader()
+      reader.onload = () => {
+        img.src = reader.result as string
+      }
+      reader.onerror = () => reject(new Error('Failed to read file'))
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const handleRemove = () => {
+    setPreview(null)
+    if (inputRef.current) {
+      inputRef.current.value = ''
     }
+    onRemove?.()
   }
 
   return (
     <div className="space-y-2">
-      {currentImage ? (
+      {preview ? (
         <div className="relative">
           <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-[var(--secondary)]">
-            <Image
-              src={currentImage}
+            <img
+              src={preview}
               alt="Uploaded photo"
-              fill
-              className="object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
-          {onRemove && (
-            <button
-              type="button"
-              onClick={onRemove}
-              className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
       ) : (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          disabled={isUploading}
+          disabled={isProcessing}
           className="w-full aspect-video rounded-lg border-2 border-dashed border-[var(--border)] hover:border-[var(--camo-sage)] transition-colors flex flex-col items-center justify-center gap-3 bg-[var(--input)]"
         >
-          {isUploading ? (
+          {isProcessing ? (
             <>
               <Loader2 className="w-10 h-10 text-[var(--muted-foreground)] animate-spin" />
-              <span className="text-sm text-[var(--muted-foreground)]">Uploading...</span>
+              <span className="text-sm text-[var(--muted-foreground)]">Processing...</span>
             </>
           ) : (
             <>

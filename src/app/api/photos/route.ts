@@ -4,8 +4,8 @@ import { requireAuth, getSession } from '@/lib/session'
 import { z } from 'zod'
 
 const photoSchema = z.object({
-  photoUrl: z.string().url('Valid photo URL is required'),
-  photoPublicId: z.string().min(1, 'Photo public ID is required'),
+  photoData: z.string().min(1, 'Photo is required'),
+  photoMimeType: z.string().min(1, 'Photo mime type is required'),
   caption: z.string().max(500).optional(),
 })
 
@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
     const photo = await prisma.photoReel.create({
       data: {
         hunterId: session.hunterId || null,
-        photoUrl: parsed.data.photoUrl,
-        photoPublicId: parsed.data.photoPublicId,
+        photoData: parsed.data.photoData,
+        photoMimeType: parsed.data.photoMimeType,
         caption: parsed.data.caption,
       },
       include: {

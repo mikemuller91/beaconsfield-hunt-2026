@@ -1,13 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { format } from 'date-fns'
 import {
   Clock,
   MapPin,
   User,
-  Users,
   Target,
   XCircle,
   CheckCircle,
@@ -26,7 +24,8 @@ interface Submission {
   date: string
   time: string
   location: string
-  photoUrl: string
+  photoData: string
+  photoMimeType: string
   score: number
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
   rejectionReason?: string | null
@@ -102,11 +101,10 @@ export function SubmissionCard({
         <div className="flex items-start gap-3">
           {/* Photo thumbnail */}
           <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-[var(--secondary)] flex-shrink-0">
-            <Image
-              src={submission.photoUrl}
+            <img
+              src={submission.photoData}
               alt="Submission"
-              fill
-              className="object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
 
@@ -153,12 +151,11 @@ export function SubmissionCard({
       {isExpanded && (
         <div className="border-t border-[var(--border)]">
           {/* Large photo */}
-          <div className="relative w-full aspect-video">
-            <Image
-              src={submission.photoUrl}
+          <div className="relative w-full aspect-video bg-black">
+            <img
+              src={submission.photoData}
               alt="Submission"
-              fill
-              className="object-contain bg-black"
+              className="w-full h-full object-contain"
             />
           </div>
 

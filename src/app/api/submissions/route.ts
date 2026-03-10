@@ -12,8 +12,8 @@ const submissionSchema = z.object({
   date: z.string().min(1, 'Date is required'),
   time: z.string().min(1, 'Time is required'),
   location: z.string().min(1, 'Location is required'),
-  photoUrl: z.string().url('Valid photo URL is required'),
-  photoPublicId: z.string().min(1, 'Photo public ID is required'),
+  photoData: z.string().min(1, 'Photo is required'),
+  photoMimeType: z.string().min(1, 'Photo mime type is required'),
 }).refine(
   (data) => data.type === 'MISS' || data.animalType !== undefined,
   { message: 'Animal type is required for animal submissions', path: ['animalType'] }
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { type, animalType, session: huntingSession, date, time, location, photoUrl, photoPublicId } = parsed.data
+    const { type, animalType, session: huntingSession, date, time, location, photoData, photoMimeType } = parsed.data
 
     // Calculate score
     const score = getSubmissionScore(type, animalType)
@@ -93,8 +93,8 @@ export async function POST(request: NextRequest) {
         date: new Date(date),
         time,
         location,
-        photoUrl,
-        photoPublicId,
+        photoData,
+        photoMimeType,
         score,
         status: 'PENDING',
       },

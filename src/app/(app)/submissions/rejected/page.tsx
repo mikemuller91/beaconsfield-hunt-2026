@@ -12,7 +12,8 @@ interface Submission {
   date: string
   time: string
   location: string
-  photoUrl: string
+  photoData: string
+  photoMimeType: string
   score: number
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
   rejectionReason?: string | null

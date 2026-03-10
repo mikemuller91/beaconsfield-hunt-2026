@@ -12,8 +12,8 @@ const updateSchema = z.object({
   date: z.string().optional(),
   time: z.string().optional(),
   location: z.string().optional(),
-  photoUrl: z.string().url().optional(),
-  photoPublicId: z.string().optional(),
+  photoData: z.string().optional(),
+  photoMimeType: z.string().optional(),
 })
 
 // GET single submission
@@ -98,8 +98,8 @@ export async function PUT(
     if (parsed.data.date !== undefined) updateData.date = new Date(parsed.data.date)
     if (parsed.data.time !== undefined) updateData.time = parsed.data.time
     if (parsed.data.location !== undefined) updateData.location = parsed.data.location
-    if (parsed.data.photoUrl !== undefined) updateData.photoUrl = parsed.data.photoUrl
-    if (parsed.data.photoPublicId !== undefined) updateData.photoPublicId = parsed.data.photoPublicId
+    if (parsed.data.photoData !== undefined) updateData.photoData = parsed.data.photoData
+    if (parsed.data.photoMimeType !== undefined) updateData.photoMimeType = parsed.data.photoMimeType
 
     // Recalculate score if type or animal changed
     const newType = (updateData.type as SubmissionType) || submission.type

@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { format } from 'date-fns'
 import { Camera, Plus, X, Loader2, User, Trash2 } from 'lucide-react'
 import { ImageUpload } from '@/components/ui/ImageUpload'
 
 interface Photo {
   id: string
-  photoUrl: string
+  photoData: string
+  photoMimeType: string
   caption: string | null
   createdAt: string
   hunter: { id: string; name: string } | null
@@ -27,8 +27,8 @@ export default function PhotoReelPage() {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null)
 
   // Upload form state
-  const [photoUrl, setPhotoUrl] = useState('')
-  const [photoPublicId, setPhotoPublicId] = useState('')
+  const [photoData, setPhotoData] = useState('')
+  const [photoMimeType, setPhotoMimeType] = useState('')
   const [caption, setCaption] = useState('')
   const [isUploading, setIsUploading] = useState(false)
 
@@ -56,22 +56,22 @@ export default function PhotoReelPage() {
   }, [])
 
   const handleUpload = async () => {
-    if (!photoUrl) return
+    if (!photoData) return
     setIsUploading(true)
 
     try {
       const res = await fetch('/api/photos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photoUrl, photoPublicId, caption }),
+        body: JSON.stringify({ photoData, photoMimeType, caption }),
       })
 
       if (res.ok) {
         const data = await res.json()
         setPhotos(prev => [data.data, ...prev])
         setShowUpload(false)
-        setPhotoUrl('')
-        setPhotoPublicId('')
+        setPhotoData('')
+        setPhotoMimeType('')
         setCaption('')
       }
     } catch (e) {
@@ -135,14 +135,14 @@ export default function PhotoReelPage() {
 
             <div className="space-y-4">
               <ImageUpload
-                onUpload={(url, publicId) => {
-                  setPhotoUrl(url)
-                  setPhotoPublicId(publicId)
+                onUpload={(data, mimeType) => {
+                  setPhotoData(data)
+                  setPhotoMimeType(mimeType)
                 }}
-                currentImage={photoUrl}
+                currentImage={photoData}
                 onRemove={() => {
-                  setPhotoUrl('')
-                  setPhotoPublicId('')
+                  setPhotoData('')
+                  setPhotoMimeType('')
                 }}
               />
 
@@ -160,7 +160,7 @@ export default function PhotoReelPage() {
 
               <button
                 onClick={handleUpload}
-                disabled={!photoUrl || isUploading}
+                disabled={!photoData || isUploading}
                 className="btn btn-primary w-full"
               >
                 {isUploading ? (
@@ -197,12 +197,11 @@ export default function PhotoReelPage() {
               <X className="w-6 h-6" />
             </button>
 
-            <div className="relative w-full aspect-video">
-              <Image
-                src={selectedPhoto.photoUrl}
+            <div className="relative w-full aspect-video bg-black">
+              <img
+                src={selectedPhoto.photoData}
                 alt={selectedPhoto.caption || 'Photo'}
-                fill
-                className="object-contain"
+                className="w-full h-full object-contain"
               />
             </div>
 
@@ -253,11 +252,10 @@ export default function PhotoReelPage() {
               className="relative aspect-square rounded-lg overflow-hidden bg-[var(--secondary)] cursor-pointer hover:opacity-90 transition-opacity"
               onClick={() => setSelectedPhoto(photo)}
             >
-              <Image
-                src={photo.photoUrl}
+              <img
+                src={photo.photoData}
                 alt={photo.caption || 'Photo'}
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
               {photo.caption && (
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2">

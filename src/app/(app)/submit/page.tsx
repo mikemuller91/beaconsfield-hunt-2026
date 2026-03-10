@@ -25,8 +25,8 @@ export default function SubmitPage() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [time, setTime] = useState(new Date().toTimeString().slice(0, 5))
   const [location, setLocation] = useState('')
-  const [photoUrl, setPhotoUrl] = useState('')
-  const [photoPublicId, setPhotoPublicId] = useState('')
+  const [photoData, setPhotoData] = useState('')
+  const [photoMimeType, setPhotoMimeType] = useState('')
 
   useEffect(() => {
     const checkHunter = async () => {
@@ -57,8 +57,8 @@ export default function SubmitPage() {
           date,
           time,
           location,
-          photoUrl,
-          photoPublicId,
+          photoData,
+          photoMimeType,
         }),
       })
 
@@ -182,14 +182,14 @@ export default function SubmitPage() {
         <div className="card-camo p-4">
           <label className="label">Photo Evidence</label>
           <ImageUpload
-            onUpload={(url, publicId) => {
-              setPhotoUrl(url)
-              setPhotoPublicId(publicId)
+            onUpload={(data, mimeType) => {
+              setPhotoData(data)
+              setPhotoMimeType(mimeType)
             }}
-            currentImage={photoUrl}
+            currentImage={photoData}
             onRemove={() => {
-              setPhotoUrl('')
-              setPhotoPublicId('')
+              setPhotoData('')
+              setPhotoMimeType('')
             }}
           />
         </div>
@@ -266,7 +266,7 @@ export default function SubmitPage() {
         {/* Submit button */}
         <button
           type="submit"
-          disabled={isSubmitting || !photoUrl || (type === 'ANIMAL' && !animalType)}
+          disabled={isSubmitting || !photoData || (type === 'ANIMAL' && !animalType)}
           className="btn btn-primary w-full"
         >
           {isSubmitting ? (
