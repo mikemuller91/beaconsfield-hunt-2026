@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+
+// Route segment config for larger payloads
+export const maxDuration = 30 // seconds
 import { prisma } from '@/lib/db'
 import { requireAuth, requireHunter, getSession } from '@/lib/session'
 import { getSubmissionScore } from '@/lib/scores'

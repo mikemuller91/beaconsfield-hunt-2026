@@ -25,9 +25,9 @@ export function ImageUpload({ onUpload, currentImage, onRemove }: ImageUploadPro
       return
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image must be less than 5MB')
+    // Validate file size (max 15MB before compression)
+    if (file.size > 15 * 1024 * 1024) {
+      setError('Image must be less than 15MB')
       return
     }
 
