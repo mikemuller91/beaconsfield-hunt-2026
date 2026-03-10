@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Teams participating in the hunt
+model Team {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hunters     Hunter[]
+  submissions Submission[]
+}
+
+// Individual hunters
+model Hunter {
+  id        String   @id @default(cuid())
+  name      String
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  submissions Submission[]
+  photos      PhotoReel[]
+
+  @@unique([name, teamId])
+}
+
+// Fixed hunting sessions
+enum HuntingSession {
+  DAY1_MORNING
+  DAY1_EVENING
+  DAY2_MORNING
+  DAY2_EVENING
+}
+
+// Submission type
+enum SubmissionType {
+  ANIMAL
+  MISS
+}
+
+// Animal types with their scores
+enum AnimalType {
+  KUDU_OVER_45      // 35 points
+  KUDU_UNDER_45     // 25 points
+  KUDU_COW          // 15 points
+  BUSHBUCK_OVER_12  // 25 points
+  BUSHBUCK_UNDER_12 // 15 points
+  IMPALA_RAM        // 10 points
+  IMPALA_EWE        // 5 points
+  BLESBUCK          // 5 points
+  PIG               // 5 points
+  BABOON            // 15 points
+  MONKEY            // 1 point
+  DUCK              // 0.5 points
+}
+
+// Approval status
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Submissions (animal shots or misses)
+model Submission {
+  id             String           @id @default(cuid())
+  hunterId       String
+  hunter         Hunter           @relation(fields: [hunterId], references: [id], onDelete: Cascade)
+  teamId         String
+  team           Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  type           SubmissionType
+  animalType     AnimalType?      // Only for ANIMAL type
+  session        HuntingSession
+  photoUrl       String
+  photoPublicId  String           // Cloudinary public ID for deletion
+  date           DateTime
+  time           String           // Stored as string like "14:30"
+  location       String
+  score          Float            // Calculated score (positive for animals, -5 for miss)
+  status         SubmissionStatus @default(PENDING)
+  rejectionReason String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([status])
+  @@index([hunterId])
+  @@index([teamId])
+  @@index([session])
+}
+
+// Photo reel for memory board
+model PhotoReel {
+  id            String   @id @default(cuid())
+  hunterId      String?
+  hunter        Hunter?  @relation(fields: [hunterId], references: [id], onDelete: SetNull)
+  photoUrl      String
+  photoPublicId String   // Cloudinary public ID
+  caption       String?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+}
