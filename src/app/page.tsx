@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
-import { RifleIcon } from '@/components/ui/RifleIcon'
+import { BuckIcon } from '@/components/ui/BuckIcon'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -71,7 +71,7 @@ export default function LoginPage() {
         {/* Logo and title */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl camo-accent mb-4">
-            <RifleIcon className="w-12 h-12 text-white" />
+            <BuckIcon className="w-14 h-14 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2">Beaconsfield Hunt</h1>
           <p className="text-[var(--camo-tan)] text-lg">2026</p>
@@ -133,7 +133,7 @@ export default function LoginPage() {
                 </>
               ) : (
                 <>
-                  <RifleIcon className="w-5 h-5" />
+                  <BuckIcon className="w-5 h-5" />
                   <span>Enter Hunt</span>
                 </>
               )}
