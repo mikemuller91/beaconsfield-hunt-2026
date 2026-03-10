@@ -73,7 +73,7 @@ export default function AppLayout({
         teamName={session.teamName}
         onLogout={handleLogout}
       />
-      <main className="pt-20 lg:pt-0 lg:ml-64 p-4 lg:p-6">
+      <main className="pt-20 pb-4 px-4 lg:pt-6 lg:pb-6 lg:px-6 lg:ml-64">
         {children}
       </main>
     </div>
