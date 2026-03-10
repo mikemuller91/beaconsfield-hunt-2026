@@ -145,7 +145,11 @@ export default function SubmitPage() {
             </button>
             <button
               type="button"
-              onClick={() => setType('MISS')}
+              onClick={() => {
+                setType('MISS')
+                setPhotoData('')
+                setPhotoMimeType('')
+              }}
               className={`p-4 rounded-lg border-2 transition-colors flex flex-col items-center gap-2 ${
                 type === 'MISS'
                   ? 'border-red-600 bg-red-900/30'
@@ -171,28 +175,30 @@ export default function SubmitPage() {
               <option value="">Select animal...</option>
               {Object.entries(ANIMAL_DISPLAY_NAMES).map(([key, label]) => (
                 <option key={key} value={key}>
-                  {label} ({ANIMAL_SCORES[key as AnimalType]} pts)
+                  {label}
                 </option>
               ))}
             </select>
           </div>
         )}
 
-        {/* Photo upload */}
-        <div className="card-camo p-4">
-          <label className="label">Photo Evidence</label>
-          <ImageUpload
-            onUpload={(data, mimeType) => {
-              setPhotoData(data)
-              setPhotoMimeType(mimeType)
-            }}
-            currentImage={photoData}
-            onRemove={() => {
-              setPhotoData('')
-              setPhotoMimeType('')
-            }}
-          />
-        </div>
+        {/* Photo upload (only for animal shots) */}
+        {type === 'ANIMAL' && (
+          <div className="card-camo p-4">
+            <label className="label">Photo Evidence</label>
+            <ImageUpload
+              onUpload={(data, mimeType) => {
+                setPhotoData(data)
+                setPhotoMimeType(mimeType)
+              }}
+              currentImage={photoData}
+              onRemove={() => {
+                setPhotoData('')
+                setPhotoMimeType('')
+              }}
+            />
+          </div>
+        )}
 
         {/* Session */}
         <div className="card-camo p-4">
@@ -266,7 +272,7 @@ export default function SubmitPage() {
         {/* Submit button */}
         <button
           type="submit"
-          disabled={isSubmitting || !photoData || (type === 'ANIMAL' && !animalType)}
+          disabled={isSubmitting || (type === 'ANIMAL' && (!photoData || !animalType))}
           className="btn btn-primary w-full"
         >
           {isSubmitting ? (
