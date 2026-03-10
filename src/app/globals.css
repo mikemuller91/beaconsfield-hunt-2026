@@ -51,10 +51,10 @@
   --warning: #8b6b3a;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 html,

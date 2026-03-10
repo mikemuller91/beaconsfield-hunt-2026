@@ -73,7 +73,13 @@ export default function AppLayout({
         teamName={session.teamName}
         onLogout={handleLogout}
       />
-      <main className="pt-20 pb-4 px-4 lg:pt-6 lg:pb-6 lg:px-6 lg:ml-64">
+      {/* Mobile spacer for fixed header */}
+      <div className="h-16 lg:hidden" aria-hidden="true" />
+      {/* Main content */}
+      <main
+        className="p-4 lg:p-6 lg:ml-64"
+        style={{ minHeight: 'calc(100vh - 4rem)' }}
+      >
         {children}
       </main>
     </div>
