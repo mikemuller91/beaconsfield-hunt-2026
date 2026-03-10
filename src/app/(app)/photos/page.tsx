@@ -12,6 +12,7 @@ interface Photo {
   caption: string | null
   createdAt: string
   hunter: { id: string; name: string } | null
+  isSubmission?: boolean
 }
 
 interface SessionData {
@@ -92,6 +93,8 @@ export default function PhotoReelPage() {
   }
 
   const canDelete = (photo: Photo) => {
+    // Submission photos cannot be deleted from the photo reel
+    if (photo.isSubmission) return false
     return session?.isAdmin || photo.hunter?.id === session?.hunterId
   }
 

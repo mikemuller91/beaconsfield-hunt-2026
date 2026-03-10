@@ -11,6 +11,14 @@ export async function DELETE(
     const session = await requireAuth()
     const { id } = await params
 
+    // Submission photos cannot be deleted from the photo reel
+    if (id.startsWith('submission-')) {
+      return NextResponse.json(
+        { success: false, error: 'Submission photos cannot be deleted from the photo reel' },
+        { status: 403 }
+      )
+    }
+
     const photo = await prisma.photoReel.findUnique({
       where: { id }
     })

@@ -9,12 +9,13 @@ const photoSchema = z.object({
   caption: z.string().max(500).optional(),
 })
 
-// GET all photos for memory reel
+// GET all photos for memory reel (includes approved submissions + manual uploads)
 export async function GET() {
   try {
     await requireAuth()
 
-    const photos = await prisma.photoReel.findMany({
+    // Get photos from PhotoReel table
+    const reelPhotos = await prisma.photoReel.findMany({
       include: {
         hunter: {
           select: { id: true, name: true }
@@ -23,7 +24,49 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     })
 
-    return NextResponse.json({ success: true, data: photos })
+    // Get photos from approved submissions
+    const approvedSubmissions = await prisma.submission.findMany({
+      where: {
+        status: 'APPROVED',
+        type: 'ANIMAL',
+        photoData: { not: '' }
+      },
+      include: {
+        hunter: {
+          select: { id: true, name: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    // Convert submissions to photo format
+    const submissionPhotos = approvedSubmissions.map(sub => ({
+      id: `submission-${sub.id}`,
+      photoData: sub.photoData,
+      photoMimeType: sub.photoMimeType,
+      caption: `${sub.animalType?.replace(/_/g, ' ')} - ${sub.location}`,
+      createdAt: sub.createdAt.toISOString(),
+      hunter: sub.hunter,
+      isSubmission: true
+    }))
+
+    // Convert reel photos to same format
+    const manualPhotos = reelPhotos.map(photo => ({
+      id: photo.id,
+      photoData: photo.photoData,
+      photoMimeType: photo.photoMimeType,
+      caption: photo.caption,
+      createdAt: photo.createdAt.toISOString(),
+      hunter: photo.hunter,
+      isSubmission: false
+    }))
+
+    // Combine and sort by date (newest first)
+    const allPhotos = [...submissionPhotos, ...manualPhotos].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+
+    return NextResponse.json({ success: true, data: allPhotos })
   } catch (error) {
     console.error('Get photos error:', error)
     const message = error instanceof Error ? error.message : 'Failed to fetch photos'
