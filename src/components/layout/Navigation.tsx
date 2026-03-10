@@ -16,8 +16,10 @@ import {
   Menu,
   X,
   LogOut,
-  Crosshair
+  Crosshair,
+  Target
 } from 'lucide-react'
+import { RifleIcon } from '@/components/ui/RifleIcon'
 
 interface NavigationProps {
   isAdmin: boolean
@@ -28,9 +30,9 @@ interface NavigationProps {
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
-  { href: '/submit', label: 'Submit', icon: PlusCircle },
+  { href: '/submit', label: 'Log Shot', icon: Target },
   { href: '/leaderboard/teams', label: 'Teams', icon: Trophy },
-  { href: '/leaderboard/hunters', label: 'Hunters', icon: Users },
+  { href: '/leaderboard/hunters', label: 'Hunters', icon: Crosshair },
   { href: '/submissions/pending', label: 'Pending', icon: Clock },
   { href: '/submissions/approved', label: 'Approved', icon: CheckCircle },
   { href: '/submissions/rejected', label: 'Rejected', icon: XCircle },
@@ -50,7 +52,7 @@ export function Navigation({ isAdmin, hunterName, teamName, onLogout }: Navigati
       <header className="fixed top-0 left-0 right-0 z-50 camo-nav border-b border-[var(--border)] lg:hidden">
         <div className="flex items-center justify-between px-4 h-16">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <Crosshair className="w-6 h-6 text-[var(--camo-tan)]" />
+            <RifleIcon className="w-7 h-7 text-[var(--camo-tan)]" />
             <span className="font-bold text-lg">BH2026</span>
           </Link>
 
@@ -123,7 +125,7 @@ export function Navigation({ isAdmin, hunterName, teamName, onLogout }: Navigati
         <div className="p-4 border-b border-[var(--border)]">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg camo-accent flex items-center justify-center">
-              <Crosshair className="w-6 h-6 text-white" />
+              <RifleIcon className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="font-bold text-lg leading-tight">Beaconsfield</h1>

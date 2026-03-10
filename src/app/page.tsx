@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Crosshair, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { RifleIcon } from '@/components/ui/RifleIcon'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -70,7 +71,7 @@ export default function LoginPage() {
         {/* Logo and title */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl camo-accent mb-4">
-            <Crosshair className="w-10 h-10 text-white" />
+            <RifleIcon className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2">Beaconsfield Hunt</h1>
           <p className="text-[var(--camo-tan)] text-lg">2026</p>
@@ -132,7 +133,7 @@ export default function LoginPage() {
                 </>
               ) : (
                 <>
-                  <Crosshair className="w-5 h-5" />
+                  <RifleIcon className="w-5 h-5" />
                   <span>Enter Hunt</span>
                 </>
               )}
