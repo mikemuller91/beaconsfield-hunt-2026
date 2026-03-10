@@ -135,8 +135,8 @@ export function ImageUpload({ onUpload, currentImage, onRemove }: ImageUploadPro
                 <Camera className="w-7 h-7 text-[var(--camo-tan)]" />
               </div>
               <div className="text-center">
-                <p className="font-medium">Tap to upload photo</p>
-                <p className="text-sm text-[var(--muted-foreground)]">Required for submission</p>
+                <p className="font-medium">Tap to add photo</p>
+                <p className="text-sm text-[var(--muted-foreground)]">Take photo or choose from library</p>
               </div>
             </>
           )}
@@ -147,7 +147,6 @@ export function ImageUpload({ onUpload, currentImage, onRemove }: ImageUploadPro
         ref={inputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={handleFileChange}
         className="hidden"
       />
