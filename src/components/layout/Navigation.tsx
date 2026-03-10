@@ -50,7 +50,7 @@ export function Navigation({ isAdmin, hunterName, teamName, onLogout }: Navigati
   return (
     <>
       {/* Mobile header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--card)] border-b border-[var(--border)] lg:hidden">
+      <header className="fixed top-0 left-0 right-0 z-50 camo-nav border-b border-[var(--border)] lg:hidden">
         <div className="flex items-center justify-between px-4 h-16">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Crosshair className="w-6 h-6 text-[var(--camo-tan)]" />
@@ -82,7 +82,7 @@ export function Navigation({ isAdmin, hunterName, teamName, onLogout }: Navigati
 
       {/* Mobile slide-out menu */}
       <nav
-        className={`fixed top-16 right-0 bottom-0 w-64 bg-[var(--card)] border-l border-[var(--border)] z-50 transform transition-transform duration-300 lg:hidden ${
+        className={`fixed top-16 right-0 bottom-0 w-64 camo-nav border-l border-[var(--border)] z-50 transform transition-transform duration-300 lg:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -122,7 +122,7 @@ export function Navigation({ isAdmin, hunterName, teamName, onLogout }: Navigati
       </nav>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-[var(--card)] border-r border-[var(--border)] flex-col">
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 camo-nav border-r border-[var(--border)] flex-col">
         <div className="p-4 border-b border-[var(--border)]">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg camo-accent flex items-center justify-center">
