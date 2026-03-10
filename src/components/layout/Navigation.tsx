@@ -35,17 +35,14 @@ const navItems = [
   { href: '/submissions/approved', label: 'Approved', icon: CheckCircle },
   { href: '/submissions/rejected', label: 'Rejected', icon: XCircle },
   { href: '/photos', label: 'Photos', icon: Camera },
-]
-
-const adminItems = [
-  { href: '/admin', label: 'Admin Panel', icon: Settings },
+  { href: '/admin', label: 'Admin', icon: Settings },
 ]
 
 export function Navigation({ isAdmin, hunterName, teamName, onLogout }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
-  const allItems = isAdmin ? [...navItems, ...adminItems] : navItems
+  const allItems = navItems
 
   return (
     <>
