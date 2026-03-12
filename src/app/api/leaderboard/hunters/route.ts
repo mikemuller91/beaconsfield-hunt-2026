@@ -20,7 +20,7 @@ export async function GET() {
       }
     })
 
-    const leaderboard: HunterLeaderboardEntry[] = hunters.map(hunter => {
+    const leaderboard = hunters.map(hunter => {
       const animalSubmissions = hunter.submissions.filter(s => s.type === 'ANIMAL')
       const missSubmissions = hunter.submissions.filter(s => s.type === 'MISS')
 
@@ -36,6 +36,16 @@ export async function GET() {
         animalScore,
         missCount: missSubmissions.length,
         approvedSubmissions: hunter.submissions.length,
+        // Include detailed submissions for breakdown
+        submissions: hunter.submissions.map(s => ({
+          id: s.id,
+          type: s.type,
+          animalType: s.animalType,
+          score: s.score,
+          session: s.session,
+          date: s.date,
+          location: s.location,
+        })).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
       }
     })
 
