@@ -15,11 +15,14 @@ const submissionSchema = z.object({
   date: z.string().min(1, 'Date is required'),
   time: z.string().min(1, 'Time is required'),
   location: z.string().min(1, 'Location is required'),
-  photoData: z.string().min(1, 'Photo is required'),
-  photoMimeType: z.string().min(1, 'Photo mime type is required'),
+  photoData: z.string().optional(),
+  photoMimeType: z.string().optional(),
 }).refine(
   (data) => data.type === 'MISS' || data.animalType !== undefined,
   { message: 'Animal type is required for animal submissions', path: ['animalType'] }
+).refine(
+  (data) => data.type === 'MISS' || (data.photoData && data.photoData.length > 0),
+  { message: 'Photo is required for animal submissions', path: ['photoData'] }
 )
 
 // GET submissions
@@ -96,8 +99,8 @@ export async function POST(request: NextRequest) {
         date: new Date(date),
         time,
         location,
-        photoData,
-        photoMimeType,
+        photoData: photoData || '',
+        photoMimeType: photoMimeType || '',
         score,
         status: 'PENDING',
       },
